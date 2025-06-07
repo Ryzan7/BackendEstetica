@@ -31,6 +31,8 @@ public class ClienteController {
     public ResponseEntity<List<ClienteModel>> getAllClientes() {
         return ResponseEntity.ok(clienteService.findAll());
     }
+
+
     @GetMapping("/{clienteId}")
     public ResponseEntity<ClienteModel> getClienteById(@PathVariable UUID clienteId) {
         return clienteService.findById(clienteId)
@@ -45,5 +47,11 @@ public class ClienteController {
     ) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.update(clienteRecordDto,clienteService.findById(clienteId).get()));
+    }
+
+    @DeleteMapping("/{clienteId}")
+    public ResponseEntity<Void> deleteCliente(@PathVariable UUID clienteId) {
+        clienteService.deleteClienteById(clienteId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

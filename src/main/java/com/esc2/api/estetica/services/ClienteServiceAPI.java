@@ -12,4 +12,6 @@ public interface ClienteServiceAPI {
     ClienteModel update(ClienteRecordDto clienteRecordDto, ClienteModel clienteModel);
     List<ClienteModel> findAll();
     Optional<ClienteModel> findById(UUID clienteId);
+
+    void deleteClienteById(UUID clienteId);
 }
