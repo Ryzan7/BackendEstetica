@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -53,5 +54,10 @@ public class ClienteController {
     public ResponseEntity<Void> deleteCliente(@PathVariable UUID clienteId) {
         clienteService.deleteClienteById(clienteId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping(params = "nomeCliente")
+    public ResponseEntity<List<ClienteModel>> findClienteByNome(@RequestParam String nomeCliente) {
+        return ResponseEntity.status(HttpStatus.OK).body(clienteService.findByNome(nomeCliente));
     }
 }

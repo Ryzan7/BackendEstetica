@@ -14,4 +14,6 @@ public interface ClienteServiceAPI {
     Optional<ClienteModel> findById(UUID clienteId);
 
     void deleteClienteById(UUID clienteId);
+
+    List<ClienteModel> findByNome(String nome);
 }

@@ -56,9 +56,16 @@ public class ClienteServiceImpl implements ClienteServiceAPI {
 
     @Override
     public void deleteClienteById(UUID clienteId) {
-        ClienteModel clienteModel = findById(clienteId).orElseThrow(
+        ClienteModel clienteModel = clienteRepository.findById(clienteId).orElseThrow(
                 () -> new NotFoundException("Cliente não encontrado.")
         );
         clienteRepository.delete(clienteModel);
+    }
+
+    @Override
+    public List<ClienteModel> findByNome(String nome) {
+        List<ClienteModel> clienteModel = clienteRepository.findByNome(nome);
+        return clienteModel;
+
     }
 }
