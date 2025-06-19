@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
-@Table(name = "TB_CLIENTE")
+@Table(name = "TB_CLIENTES")
 public class ClienteModel implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
