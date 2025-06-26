@@ -32,6 +32,8 @@ public class UsuarioModel implements Serializable {
     private String username;
 
     @Column(nullable = false)
+
+    //TODO IMPLEMENTAR CRIPTOGRAFIA DE SENHA
     private String password;
 
     @Column(nullable = false)
