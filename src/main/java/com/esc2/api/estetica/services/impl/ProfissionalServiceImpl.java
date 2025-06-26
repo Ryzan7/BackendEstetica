@@ -6,7 +6,7 @@ import com.esc2.api.estetica.exceptions.NotFoundException;
 import com.esc2.api.estetica.models.ProfissionalModel;
 import com.esc2.api.estetica.repositories.ProfissionalRepository;
 import com.esc2.api.estetica.services.ProfissionalServiceAPI;
-import org.springframework.beans.BeanUtils;
+import com.esc2.api.estetica.mappers.ProfissionalMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +21,9 @@ public class ProfissionalServiceImpl implements ProfissionalServiceAPI {
 
     @Autowired
     private ProfissionalRepository profissionalRepository;
+    
+    @Autowired
+    private ProfissionalMapper profissionalMapper;
 
     @Override
     public ProfissionalModel cadastrar(ProfissionalRecordDto dto) {
@@ -33,17 +36,15 @@ public class ProfissionalServiceImpl implements ProfissionalServiceAPI {
             throw new RuntimeException("Este cargo exige registro profissional.");
         }
 
-        ProfissionalModel model = new ProfissionalModel();
-        BeanUtils.copyProperties(dto, model);
-        model.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
-
-        return profissionalRepository.save(model);
+        ProfissionalModel profissionalModel = profissionalMapper.toModel(dto);
+        profissionalModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
+        return profissionalRepository.save(profissionalModel);
     }
 
     @Override
-    public ProfissionalModel atualizar(ProfissionalRecordDto dto, ProfissionalModel model) {
-        BeanUtils.copyProperties(dto, model);
-        return profissionalRepository.save(model);
+    public ProfissionalModel atualizar(ProfissionalRecordDto dto, ProfissionalModel profissionalModel) {
+        profissionalMapper.updateFromDto(dto, profissionalModel);
+        return profissionalRepository.save(profissionalModel);
     }
 
     @Override
@@ -62,9 +63,9 @@ public class ProfissionalServiceImpl implements ProfissionalServiceAPI {
 
     @Override
     public void deletarPorId(UUID id) {
-        ProfissionalModel model = profissionalRepository.findById(id)
+        ProfissionalModel profissionalModel = profissionalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Profissional não encontrado."));
-        profissionalRepository.delete(model);
+        profissionalRepository.delete(profissionalModel);
     }
 
     @Override
