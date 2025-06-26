@@ -41,10 +41,6 @@ public class AgendamentoModel implements Serializable {
     @Column(nullable = false)
     private StatusAgendamentoEnum status;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "agendamento", fetch = FetchType.LAZY)
-    @Fetch(FetchMode.SUBSELECT)
-    private Set<ServicoModel> servicos;
 
     private BigDecimal valorTotal;
 
