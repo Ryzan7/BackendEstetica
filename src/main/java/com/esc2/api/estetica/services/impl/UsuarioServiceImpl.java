@@ -1,10 +1,12 @@
 package com.esc2.api.estetica.services.impl;
 
 import com.esc2.api.estetica.dtos.UsuarioRecordDto;
+import com.esc2.api.estetica.exceptions.NotFoundException;
 import com.esc2.api.estetica.models.UsuarioModel;
 import com.esc2.api.estetica.repositories.UsuarioRepository;
 import com.esc2.api.estetica.services.UsuarioServiceAPI;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +24,7 @@ public class UsuarioServiceImpl implements UsuarioServiceAPI {
     @Override
     public UsuarioModel salvar(UsuarioRecordDto dto) {
         var model = new UsuarioModel();
-        model.setNome(dto.nome());
-        model.setEmail(dto.email());
-        model.setUsername(dto.username());
-        model.setPassword(dto.password());
-        model.setCargoEnum(dto.cargoEnum());
+        BeanUtils.copyProperties(dto, model);
         model.setCreationDate(LocalDateTime.now());
         return usuarioRepository.save(model);
     }
@@ -38,27 +36,23 @@ public class UsuarioServiceImpl implements UsuarioServiceAPI {
 
     @Override
     public Optional<UsuarioModel> buscarPorId(UUID id) {
-        return usuarioRepository.findById(id);
+        return Optional.of(usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado.")));
     }
 
     @Override
     public UsuarioModel atualizar(UUID id, UsuarioRecordDto dto) {
         UsuarioModel usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
 
-        usuario.setNome(dto.nome());
-        usuario.setEmail(dto.email());
-        usuario.setUsername(dto.username());
-        usuario.setPassword(dto.password());
-        usuario.setCargoEnum(dto.cargoEnum());
-
+        BeanUtils.copyProperties(dto, usuario);
         return usuarioRepository.save(usuario);
     }
 
     @Override
     public void deletar(UUID id) {
         UsuarioModel usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
         usuarioRepository.delete(usuario);
     }
 }

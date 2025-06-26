@@ -21,8 +21,7 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<UsuarioModel> criarUsuario(@RequestBody @Valid UsuarioRecordDto usuarioDto) {
-        UsuarioModel criado = usuarioService.salvar(usuarioDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(criado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.salvar(usuarioDto));
     }
 
     @GetMapping
@@ -31,29 +30,19 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> buscarPorId(@PathVariable UUID id) {
-        return usuarioService.buscarPorId(id)
-                .<ResponseEntity<Object>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado."));
+    public ResponseEntity<UsuarioModel> buscarPorId(@PathVariable UUID id) {
+        UsuarioModel usuario = usuarioService.buscarPorId(id).get(); // já lança erro se não achar
+        return ResponseEntity.ok(usuario);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> atualizar(@PathVariable UUID id, @RequestBody @Valid UsuarioRecordDto usuarioDto) {
-        try {
-            UsuarioModel atualizado = usuarioService.atualizar(id, usuarioDto);
-            return ResponseEntity.ok(atualizado);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
-        }
+    public ResponseEntity<UsuarioModel> atualizar(@PathVariable UUID id, @RequestBody @Valid UsuarioRecordDto usuarioDto) {
+        return ResponseEntity.ok(usuarioService.atualizar(id, usuarioDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletar(@PathVariable UUID id) {
-        try {
-            usuarioService.deletar(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
-        }
+    public ResponseEntity<Void> deletar(@PathVariable UUID id) {
+        usuarioService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }
