@@ -19,11 +19,13 @@ import java.util.UUID;
 @Service
 public class ProfissionalServiceImpl implements ProfissionalServiceAPI {
 
-    @Autowired
-    private ProfissionalRepository profissionalRepository;
-    
-    @Autowired
-    private ProfissionalMapper profissionalMapper;
+    private final ProfissionalRepository profissionalRepository;
+    private final ProfissionalMapper profissionalMapper;
+
+    public ProfissionalServiceImpl(ProfissionalRepository profissionalRepository, ProfissionalMapper profissionalMapper) {
+        this.profissionalRepository = profissionalRepository;
+        this.profissionalMapper = profissionalMapper;
+    }
 
     @Override
     public ProfissionalModel cadastrar(ProfissionalRecordDto dto) {

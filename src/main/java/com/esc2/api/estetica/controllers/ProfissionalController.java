@@ -31,7 +31,7 @@ public class ProfissionalController {
         return ResponseEntity.ok(profissionalService.listarTodos());
     }
 
-    @GetMapping("/buscar")
+    @GetMapping(params = "nome")
     public ResponseEntity<List<ProfissionalModel>> buscarPorNome(@RequestParam String nome) {
         return ResponseEntity.ok(profissionalService.buscarPorNome(nome));
     }
