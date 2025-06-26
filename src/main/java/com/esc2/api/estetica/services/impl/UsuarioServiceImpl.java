@@ -18,13 +18,20 @@ import java.util.UUID;
 @Service
 public class UsuarioServiceImpl implements UsuarioServiceAPI {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+
+    private final UsuarioRepository usuarioRepository;
+
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
 
     @Override
     public UsuarioModel salvar(UsuarioRecordDto dto) {
         var model = new UsuarioModel();
         BeanUtils.copyProperties(dto, model);
+
+        //TODO Usar o @PrePersist no Model
         model.setCreationDate(LocalDateTime.now());
         return usuarioRepository.save(model);
     }

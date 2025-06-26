@@ -32,6 +32,8 @@ public class UsuarioModel implements Serializable {
     private String username;
 
     @Column(nullable = false)
+
+    //TODO IMPLEMENTAR CRIPTOGRAFIA DE SENHA
     private String password;
 
     @Column(nullable = false)
@@ -42,4 +44,59 @@ public class UsuarioModel implements Serializable {
     @Column(nullable = false)
     private LocalDateTime creationDate;
 
+    public UUID getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(UUID usuarioId) {
+        this.usuarioId = usuarioId;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public CargoEnum getCargoEnum() {
+        return cargoEnum;
+    }
+
+    public void setCargoEnum(CargoEnum cargoEnum) {
+        this.cargoEnum = cargoEnum;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
 }

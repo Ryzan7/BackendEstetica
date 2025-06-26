@@ -30,6 +30,7 @@ public class ProfissionalModel implements Serializable {
     @Column(nullable = false, unique = true, length = 11)
     private String cpf;
 
+    //TODO Falta implementar verificação
     private String registroProfissional;
 
     @Column(nullable = false)
