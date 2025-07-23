@@ -49,18 +49,18 @@ public class ServicoModel implements Serializable {
             mappedBy = "servico",
             fetch = FetchType.LAZY
     )
-    @JsonManagedReference
-    private Set<AgendamentoServicos> agendamentosServicos = new HashSet<>();
-
-    public UUID getServicosId() {
-        return servicosId;
-    }
+    @JsonManagedReference("servico-agendamentoservicos")
+    private Set<AgendamentoServicos> agendamentos = new HashSet<>();
 
     @PrePersist
     public void prePersist() {
         if(creationDate == null) {
             creationDate = LocalDateTime.now();
         }
+    }
+
+    public UUID getServicosId() {
+        return servicosId;
     }
 
     public void setServicosId(UUID servicosId) {
@@ -115,4 +115,11 @@ public class ServicoModel implements Serializable {
         this.creationDate = creationDate;
     }
 
+    public Set<AgendamentoServicos> getAgendamentos() {
+        return agendamentos;
+    }
+
+    public void setAgendamentos(Set<AgendamentoServicos> agendamentos) {
+        this.agendamentos = agendamentos;
+    }
 }

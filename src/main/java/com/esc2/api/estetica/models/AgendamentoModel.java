@@ -2,9 +2,7 @@ package com.esc2.api.estetica.models;
 
 import com.esc2.api.estetica.enums.CargoEnum;
 import com.esc2.api.estetica.enums.StatusAgendamentoEnum;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -12,9 +10,11 @@ import org.hibernate.annotations.FetchMode;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,18 +29,35 @@ public class AgendamentoModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID agendamentoId;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id", nullable = false)
+    @JsonBackReference("cliente-agendamentos")
     private ClienteModel cliente;
 
-    private LocalDate data;
+    @OneToMany(
+            mappedBy = "agendamento",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonManagedReference("agendamento-servicos")
+    private Set<AgendamentoServicos> servicosAgendados = new HashSet<>();
 
-    private LocalTime horario;
+
+    public void adicionarServico(ServicoModel servico, BigDecimal valorCobrado, Integer duracao){
+        AgendamentoServicos servicoAdicionado = new AgendamentoServicos();
+        servicoAdicionado.setServico(servico);
+        servicoAdicionado.setAgendamento(this);
+        servicoAdicionado.setValorTotal(valorCobrado);
+        servicoAdicionado.setDuracaoTotal(duracao);
+        this.servicosAgendados.add(servicoAdicionado);
+    }
+
+
+    private Instant dataHora;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusAgendamentoEnum status;
-
 
     private BigDecimal valorTotal;
 
@@ -54,4 +71,76 @@ public class AgendamentoModel implements Serializable {
     @Column(nullable = false)
     private LocalDateTime creationDate;
 
+
+    public UUID getAgendamentoId() {
+        return agendamentoId;
+    }
+
+    public void setAgendamentoId(UUID agendamentoId) {
+        this.agendamentoId = agendamentoId;
+    }
+
+    public ClienteModel getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(ClienteModel cliente) {
+        this.cliente = cliente;
+    }
+
+    public Set<AgendamentoServicos> getServicosAgendados() {
+        return servicosAgendados;
+    }
+
+    public void setServicosAgendados(Set<AgendamentoServicos> servicosAgendados) {
+        this.servicosAgendados = servicosAgendados;
+    }
+
+    public Instant getDataHora() {
+        return dataHora;
+    }
+
+    public void setDataHora(Instant dataHora) {
+        this.dataHora = dataHora;
+    }
+
+    public StatusAgendamentoEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusAgendamentoEnum status) {
+        this.status = status;
+    }
+
+    public BigDecimal getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public Integer getDuracaoTotal() {
+        return duracaoTotal;
+    }
+
+    public void setDuracaoTotal(Integer duracaoTotal) {
+        this.duracaoTotal = duracaoTotal;
+    }
+
+    public String getObservacoes() {
+        return observacoes;
+    }
+
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
 }
