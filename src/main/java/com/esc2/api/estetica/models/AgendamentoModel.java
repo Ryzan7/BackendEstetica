@@ -43,6 +43,7 @@ public class AgendamentoModel implements Serializable {
     private Set<AgendamentoServicos> servicosAgendados = new HashSet<>();
 
 
+
     public void adicionarServico(ServicoModel servico, BigDecimal valorCobrado, Integer duracao){
         AgendamentoServicos servicoAdicionado = new AgendamentoServicos();
         servicoAdicionado.setServico(servico);
@@ -141,6 +142,6 @@ public class AgendamentoModel implements Serializable {
     }
 
     public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = LocalDateTime.now();
     }
 }

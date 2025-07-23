@@ -40,13 +40,7 @@ public class ClienteModel implements Serializable {
     @JsonManagedReference("cliente-agendamentos")
     private List<AgendamentoModel> agendamentos = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "agendamento",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    @JsonManagedReference("agendamento-servicos")
-    private Set<AgendamentoServicos> servicosAgendados = new HashSet<>();
+
 
     public UUID getClienteId() {
         return clienteId;
@@ -96,11 +90,4 @@ public class ClienteModel implements Serializable {
         this.agendamentos = agendamentos;
     }
 
-    public Set<AgendamentoServicos> getServicosAgendados() {
-        return servicosAgendados;
-    }
-
-    public void setServicosAgendados(Set<AgendamentoServicos> servicosAgendados) {
-        this.servicosAgendados = servicosAgendados;
-    }
 }
