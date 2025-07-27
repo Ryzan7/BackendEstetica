@@ -1,8 +1,10 @@
 package com.esc2.api.estetica.services.impl;
 
 import com.esc2.api.estetica.dtos.AgendamentoDto;
+import com.esc2.api.estetica.dtos.response.AgendamentoResponseDto;
 import com.esc2.api.estetica.enums.StatusAgendamentoEnum;
 import com.esc2.api.estetica.exceptions.NotFoundException;
+import com.esc2.api.estetica.mappers.AgendamentoMapper;
 import com.esc2.api.estetica.models.AgendamentoModel;
 import com.esc2.api.estetica.models.ClienteModel;
 import com.esc2.api.estetica.models.ServicoModel;
@@ -28,7 +30,7 @@ public class AgendamentoServiceImpl implements AgendamentoServiceAPI {
     }
 
     @Override
-    public AgendamentoModel create(AgendamentoDto agendamentoDto) {
+    public AgendamentoResponseDto create(AgendamentoDto agendamentoDto) {
         ClienteModel cliente = clienteRepository.findById(agendamentoDto.cliente())
                 .orElseThrow( () -> new NotFoundException("Cliente não encontrado"));
 
@@ -44,7 +46,9 @@ public class AgendamentoServiceImpl implements AgendamentoServiceAPI {
 
         }
 
-        AgendamentoModel agendamentoSalvo = agendamentoRepository.save(agendamento);
-        return agendamentoSalvo;
+        AgendamentoModel agendamentoModel = agendamentoRepository.save(agendamento);
+
+
+        return AgendamentoMapper.toResponseDto(agendamentoModel);
     }
 }

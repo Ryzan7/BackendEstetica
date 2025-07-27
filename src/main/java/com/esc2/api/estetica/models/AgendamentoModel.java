@@ -42,18 +42,6 @@ public class AgendamentoModel implements Serializable {
     @JsonManagedReference("agendamento-servicos")
     private Set<AgendamentoServicos> servicosAgendados = new HashSet<>();
 
-
-
-    public void adicionarServico(ServicoModel servico, BigDecimal valorCobrado, Integer duracao){
-        AgendamentoServicos servicoAdicionado = new AgendamentoServicos();
-        servicoAdicionado.setServico(servico);
-        servicoAdicionado.setAgendamento(this);
-        servicoAdicionado.setValorTotal(valorCobrado);
-        servicoAdicionado.setDuracaoTotal(duracao);
-        this.servicosAgendados.add(servicoAdicionado);
-    }
-
-
     private Instant dataHora;
 
     @Enumerated(EnumType.STRING)
@@ -66,11 +54,27 @@ public class AgendamentoModel implements Serializable {
 
     private String observacoes;
 
+    public void adicionarServico(ServicoModel servico, BigDecimal valorCobrado, Integer duracao){
+        AgendamentoServicos servicoAdicionado = new AgendamentoServicos();
+        servicoAdicionado.setServico(servico);
+        servicoAdicionado.setAgendamento(this);
+        servicoAdicionado.setValorTotal(valorCobrado);
+        servicoAdicionado.setDuracaoTotal(duracao);
+        this.servicosAgendados.add(servicoAdicionado);
+    }
+
+
+
     //TODO: Verificar a possibilidade de adicionar um profissional ao agendamento
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     @Column(nullable = false)
     private LocalDateTime creationDate;
+
+    @PrePersist
+    public void prePersist(){
+        creationDate = LocalDateTime.now();
+    }
 
 
     public UUID getAgendamentoId() {
