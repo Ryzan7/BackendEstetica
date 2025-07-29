@@ -44,12 +44,21 @@ public class AgendamentoMapper {
 
     }
 
+    public static List<AgendamentoResponseDto> toResponseDtoList(List<AgendamentoModel> agendamentos) {
+        if (agendamentos == null) {
+            return Collections.emptyList();
+        }
+
+        return agendamentos.stream()
+                .map(AgendamentoMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
     private static AgendamentoServicosDto toAgendamentoServicoDto(AgendamentoServicos item) {
         if (item == null) {
             return null;
         }
 
-        // Converte o Serviço dentro do item
         ServicoResumoDto servicoDto = toServicoResumoDto(item.getServico());
 
         return new AgendamentoServicosDto(

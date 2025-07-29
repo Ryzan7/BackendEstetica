@@ -63,6 +63,7 @@ public class AgendamentoModel implements Serializable {
         this.servicosAgendados.add(servicoAdicionado);
     }
 
+    //TODO Método para calcular valorTotal e duracaoTotal
 
 
     //TODO: Verificar a possibilidade de adicionar um profissional ao agendamento

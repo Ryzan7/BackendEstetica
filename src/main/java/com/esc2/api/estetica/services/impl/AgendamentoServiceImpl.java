@@ -12,8 +12,10 @@ import com.esc2.api.estetica.repositories.AgendamentoRepository;
 import com.esc2.api.estetica.repositories.ClienteRepository;
 import com.esc2.api.estetica.repositories.ServicoRepository;
 import com.esc2.api.estetica.services.AgendamentoServiceAPI;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -51,4 +53,39 @@ public class AgendamentoServiceImpl implements AgendamentoServiceAPI {
 
         return AgendamentoMapper.toResponseDto(agendamentoModel);
     }
+
+    @Override
+    public AgendamentoResponseDto findById(UUID id) {
+        return AgendamentoMapper.toResponseDto(agendamentoRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("Agendamento não encontrado")));
+    }
+
+    @Override
+    public List<AgendamentoResponseDto> findAll() {
+        return AgendamentoMapper.toResponseDtoList(agendamentoRepository.findAll());
+    }
+
+    @Override
+    public AgendamentoResponseDto update(UUID id, AgendamentoDto agendamentoDto) {
+        AgendamentoModel agendamentoEncontrado = agendamentoRepository.findById(id).orElseThrow( () -> new NotFoundException("Agendamento não encontrado"));
+
+        BeanUtils.copyProperties(agendamentoDto, agendamentoEncontrado,"id");
+
+        AgendamentoModel agendamentoModel = agendamentoRepository.save(agendamentoEncontrado);
+
+        return AgendamentoMapper.toResponseDto(agendamentoModel);
+
+    }
+
+    @Override
+    public void delete(UUID id) {
+        agendamentoRepository.findById(id).orElseThrow(() -> new NotFoundException("Agendamento não encontrado"));
+
+        agendamentoRepository.deleteById(id);
+    }
+
+    //TODO Alterar Status do Agendamento
+
+
+
 }
