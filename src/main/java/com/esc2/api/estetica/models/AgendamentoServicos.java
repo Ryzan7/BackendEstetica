@@ -1,6 +1,7 @@
 package com.esc2.api.estetica.models;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -15,9 +16,14 @@ public class AgendamentoServicos {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "servico_id", nullable = false)
+    @JsonBackReference("servico-agendamentoservicos")
     private ServicoModel servico;
 
     //TODO Adicionar relacionamento com Agendamento aqui
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "agendamento_id", nullable = false)
+    @JsonBackReference("agendamento-servicos")
+    private AgendamentoModel agendamento;
 
     @Column(name = "valor_total")
     private BigDecimal valorTotal;
@@ -59,4 +65,14 @@ public class AgendamentoServicos {
     public void setDuracaoTotal(Integer duracaoTotal) {
         this.duracaoTotal = duracaoTotal;
     }
+
+    public AgendamentoModel getAgendamento() {
+        return agendamento;
+    }
+
+    public void setAgendamento(AgendamentoModel agendamento) {
+        this.agendamento = agendamento;
+    }
+
+
 }
