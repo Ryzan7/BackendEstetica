@@ -1,0 +1,336 @@
+{
+	"info": {
+		"_postman_id": "e5de299a-6348-42cd-8f3c-10779b1d70ee",
+		"name": "REST API: Sistema de Agendamentos",
+		"description": "# 🚀 Endpoints API RestFull - Sistema de Agendamentos Cest\n\nEssa coleção é responsável por disponibilizar requisições http (GET, POST, PUT, DELETE) para a API do sistema de agendamentos da clínica de estética do CEST\n\n---\n\n#### Como funciona:\n\nA coleção está organizada em pastas, cada uma responsável por uma entidade do sistema/banco de dados. Dentro de cada pasta existem as requisições nomeadas de acordo com a sua função no sistema.\n\nNas requisições do método POST será necessário fornecer um 'body' no formato json, para que a requisição seja concluída com sucesso. Abaixo a estruta necessária para cada requisição do tipo POST do sistema.\n\n🏷️ Entidade Serviço:\n\nReponsável pelo cadastro de serviços que serão oferecidos pela clínica\n\n_Endpoint: localhost:8082/api-estetica/servicos_\n\n``` json\n{\n    \"nome\":\"nome-do-serviço\",\n    \"descricao\":\"descrição-do-serviço\",\n    \"valor\":100, //Valor a ser cobrado no serviço - Double\n    \"duracao\":40, //Duração do serviço - Integer\n    \"especialidadeEnum\": \"PODOLOGIA\" // Especialidade do serviço -> tipo ENUM\n}\n\n ```\n\n🏷️ Entidade Usuario:\n\nResponsável por cadastrar os usuários que utilizarão o sistema \\[ADMIN, COORDENADORES....\\]\n\n_Endpoint: localhost:8082/api-estetica/usuarios_\n\n``` json\n{\n    \"nome\":\"nome-do-usuario\",\n    \"email\":\"email@email.com\",\n    \"username\":\"username-do-usuario\",\n    \"password\":\"senha-do-usuario\",\n    \"cargoEnum\":\"ADMINISTRADOR\"  // Cargo -> tipo ENUM\n}\n\n ```\n\n🏷️ Entidade Profissional:\n\nResponsável por cadastrar os profissionais que farão os atendimentos na clinica\n\n_Endpoint: localhost:8082/api-estetica/profissionais_\n\n``` json\n{\n    \"nome\":\"nome-do-usuario\",\n    \"email\":\"email@email.com\",\n    \"username\":\"username-do-usuario\",\n    \"password\":\"senha-do-usuario\",\n    \"cargoEnum\":\"ADMINISTRADOR\"  // Cargo -> tipo ENUM\n}\n\n ```\n\n🏷️ Entidade Agendamento:\n\nResponsável por cadastrar os agendamentos\n\n_Endpoint: localhost:8082/api-estetica/agendamentos_\n\n``` json\n{\n    \"cliente\": \"132059ab-53b0-4f78-92a8-5ee07d71ba16\", // UUID do cliente que está fazendo o agendamento\n    \"dataHora\": \"2025-07-29T14:00:00Z\", // Instant para a data e hora do agendamento\n    \"servicosID\": [ // Serviços que farão parte daquele agendamento\n        \"dbb9de39-76ae-4482-95f3-432ea05d8824\", // UUID\n        \"0f46b43d-7233-4a05-ad22-016b165fe035\"\n    ]\n}\n\n ```\n\n🏷️ Entidade Cliente:\n\nResponsável por cadastrar os clientes\n\n_Endpoint: localhost:8082/api-estetica/clientes_\n\n``` json\n{\n    \"nome\": \"nome-do-cliente\",\n    \"telefone\": \"91912829922\",\n    \"cpf\": \"99999999999\"\n}\n\n ```",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21353897"
+	},
+	"item": [
+		{
+			"name": "Serviços",
+			"item": [
+				{
+					"name": "findAllServicos",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "createServicos",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "findById",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "editServico",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "deleteById",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "findByName",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Usuario",
+			"item": [
+				{
+					"name": "findAllUsuario",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Profissional",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Agendamentos",
+			"item": [
+				{
+					"name": "Create Agendamento",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "FindAll",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "FindById",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cliente",
+			"item": [
+				{
+					"name": "FindAll",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/info?id=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"info"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/info",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"info"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "FindById",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "FindByName",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		}
+	]
+}
