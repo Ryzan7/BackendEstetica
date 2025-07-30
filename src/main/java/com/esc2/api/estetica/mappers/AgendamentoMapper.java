@@ -38,7 +38,9 @@ public class AgendamentoMapper {
                 agendamento.getDataHora(),
                 agendamento.getStatus(),
                 clienteDto,
-                servicosAgendadosDto
+                servicosAgendadosDto,
+                agendamento.calculaValorTotal(),
+                agendamento.calculaDuracaoTotal()
         );
 
 

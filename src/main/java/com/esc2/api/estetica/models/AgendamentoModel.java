@@ -64,6 +64,23 @@ public class AgendamentoModel implements Serializable {
     }
 
     //TODO Método para calcular valorTotal e duracaoTotal
+    public BigDecimal calculaValorTotal(){
+        if(this.servicosAgendados.isEmpty()){
+            return BigDecimal.ZERO;
+        }
+        return servicosAgendados.stream()
+                .map(AgendamentoServicos::getValorTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public Integer calculaDuracaoTotal(){
+        if(this.servicosAgendados.isEmpty()){
+            return 0;
+        }
+        return servicosAgendados.stream()
+                .map(item -> item.getServico().getDuracao())
+                .reduce(0, Integer::sum);
+    }
 
 
     //TODO: Verificar a possibilidade de adicionar um profissional ao agendamento
