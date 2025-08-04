@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 public record AgendamentoServicosDto(
         Long id,
-        BigDecimal precoCobrado,
+        BigDecimal valorCobrado,
         ServicoResumoDto servico
 ) {
 }

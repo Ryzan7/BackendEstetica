@@ -54,6 +54,7 @@ public class AgendamentoModel implements Serializable {
 
     private String observacoes;
 
+    //**
     public void adicionarServico(ServicoModel servico, BigDecimal valorCobrado, Integer duracao){
         AgendamentoServicos servicoAdicionado = new AgendamentoServicos();
         servicoAdicionado.setServico(servico);
@@ -63,7 +64,6 @@ public class AgendamentoModel implements Serializable {
         this.servicosAgendados.add(servicoAdicionado);
     }
 
-    //TODO Método para calcular valorTotal e duracaoTotal
     public BigDecimal calculaValorTotal(){
         if(this.servicosAgendados.isEmpty()){
             return BigDecimal.ZERO;
@@ -82,8 +82,9 @@ public class AgendamentoModel implements Serializable {
                 .reduce(0, Integer::sum);
     }
 
-
+    //TODO Aplicar desconto (R$ ou %)
     //TODO: Verificar a possibilidade de adicionar um profissional ao agendamento
+    //
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     @Column(nullable = false)
@@ -166,4 +167,6 @@ public class AgendamentoModel implements Serializable {
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = LocalDateTime.now();
     }
+
+
 }

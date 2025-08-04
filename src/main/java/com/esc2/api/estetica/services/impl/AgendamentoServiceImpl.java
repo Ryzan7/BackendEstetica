@@ -44,6 +44,7 @@ public class AgendamentoServiceImpl implements AgendamentoServiceAPI {
         for(UUID servicoId : agendamentoDto.servicosID()){
             ServicoModel servico = servicoRepository.findById(servicoId)
                     .orElseThrow(() -> new NotFoundException("Servico com o id: " + servicoId + "não encontrado"));
+
             agendamento.adicionarServico(servico,servico.getValor(),servico.getDuracao());
 
         }
@@ -65,6 +66,8 @@ public class AgendamentoServiceImpl implements AgendamentoServiceAPI {
         return AgendamentoMapper.toResponseDtoList(agendamentoRepository.findAll());
     }
 
+
+    // TODO Lançar exceção quando o Status do agendamento estiver CONCLUIDO -> Não pode excluir nem editar
     @Override
     public AgendamentoResponseDto update(UUID id, AgendamentoDto agendamentoDto) {
         AgendamentoModel agendamentoEncontrado = agendamentoRepository.findById(id).orElseThrow( () -> new NotFoundException("Agendamento não encontrado"));
@@ -79,12 +82,15 @@ public class AgendamentoServiceImpl implements AgendamentoServiceAPI {
 
     @Override
     public void delete(UUID id) {
+
         agendamentoRepository.findById(id).orElseThrow(() -> new NotFoundException("Agendamento não encontrado"));
 
         agendamentoRepository.deleteById(id);
     }
 
+    
     //TODO Alterar Status do Agendamento
+    // TODO Finalizar Agendamento -> Confirmar os serviços prestados e depois mudar status para CONCLUIDO
 
 
 
