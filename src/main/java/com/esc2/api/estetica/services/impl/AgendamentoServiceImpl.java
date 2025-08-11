@@ -3,20 +3,26 @@ package com.esc2.api.estetica.services.impl;
 import com.esc2.api.estetica.dtos.AgendamentoDto;
 import com.esc2.api.estetica.dtos.response.AgendamentoResponseDto;
 import com.esc2.api.estetica.enums.StatusAgendamentoEnum;
+import com.esc2.api.estetica.exceptions.AgendamentoConcluidoException;
 import com.esc2.api.estetica.exceptions.NotFoundException;
 import com.esc2.api.estetica.mappers.AgendamentoMapper;
 import com.esc2.api.estetica.models.AgendamentoModel;
+import com.esc2.api.estetica.models.AgendamentoServicos;
 import com.esc2.api.estetica.models.ClienteModel;
 import com.esc2.api.estetica.models.ServicoModel;
 import com.esc2.api.estetica.repositories.AgendamentoRepository;
 import com.esc2.api.estetica.repositories.ClienteRepository;
 import com.esc2.api.estetica.repositories.ServicoRepository;
 import com.esc2.api.estetica.services.AgendamentoServiceAPI;
-import org.springframework.beans.BeanUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -49,9 +55,24 @@ public class AgendamentoServiceImpl implements AgendamentoServiceAPI {
 
         }
 
+        if(agendamentoDto.tipoDesconto()!=null && agendamentoDto.valorDesconto()!=null){
+            agendamento.setDesconto(true);
+            BigDecimal valorDoDescontoCalculado = agendamento.getValorFinalComDesconto(agendamentoDto.valorDesconto(), agendamentoDto.tipoDesconto());
+
+            agendamento.setValorDescontoAplicado(agendamentoDto.valorDesconto());
+            agendamento.setTipoDescontoAplicado(agendamentoDto.tipoDesconto());
+
+
+            agendamento.setValorTotal(valorDoDescontoCalculado);
+            agendamento.setDesconto(true);
+
+        }else{
+            agendamento.setValorTotal(agendamento.calculaValorTotal());
+        }
+
+
+
         AgendamentoModel agendamentoModel = agendamentoRepository.save(agendamento);
-
-
         return AgendamentoMapper.toResponseDto(agendamentoModel);
     }
 
@@ -66,32 +87,98 @@ public class AgendamentoServiceImpl implements AgendamentoServiceAPI {
         return AgendamentoMapper.toResponseDtoList(agendamentoRepository.findAll());
     }
 
-
-    // TODO Lançar exceção quando o Status do agendamento estiver CONCLUIDO -> Não pode excluir nem editar
     @Override
-    public AgendamentoResponseDto update(UUID id, AgendamentoDto agendamentoDto) {
-        AgendamentoModel agendamentoEncontrado = agendamentoRepository.findById(id).orElseThrow( () -> new NotFoundException("Agendamento não encontrado"));
+    public AgendamentoResponseDto concluirAgendamento(UUID id) {
+        AgendamentoModel agendamentoEncontrado = agendamentoRepository.findById(id)
+                .orElseThrow(
+                        () -> new NotFoundException("Agendamento não encontrado"));
 
-        BeanUtils.copyProperties(agendamentoDto, agendamentoEncontrado,"id");
+        agendamentoEncontrado.setStatus(StatusAgendamentoEnum.CONCLUIDO);
+        AgendamentoModel agendamentoAtualizado =  agendamentoRepository.save(agendamentoEncontrado);
 
-        AgendamentoModel agendamentoModel = agendamentoRepository.save(agendamentoEncontrado);
-
-        return AgendamentoMapper.toResponseDto(agendamentoModel);
-
+        return AgendamentoMapper.toResponseDto(agendamentoAtualizado);
     }
+
+    public AgendamentoResponseDto cancelarAgendamento(UUID id) {
+
+        AgendamentoModel agendamentoEncontrado = agendamentoRepository.findById(id)
+                .orElseThrow(
+                        () -> new NotFoundException("Agendamento não encontrado"));
+
+        if(agendamentoEncontrado.getStatus() == StatusAgendamentoEnum.CONCLUIDO){
+            throw new AgendamentoConcluidoException();
+        }
+
+        agendamentoEncontrado.setStatus(StatusAgendamentoEnum.CANCELADO);
+        AgendamentoModel agendamentoAtualizado =  agendamentoRepository.save(agendamentoEncontrado);
+
+        return AgendamentoMapper.toResponseDto(agendamentoAtualizado);
+    }
+
+
+    @Override
+    @Transactional
+    public AgendamentoResponseDto update(UUID id, AgendamentoDto agendamentoDto) {
+        AgendamentoModel agendamentoEncontrado = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Agendamento não encontrado"));
+
+        if(agendamentoEncontrado.getStatus() == StatusAgendamentoEnum.CONCLUIDO){
+            throw new AgendamentoConcluidoException();
+        }
+
+        if (agendamentoDto.dataHora() != null) {
+            agendamentoEncontrado.setDataHora(agendamentoDto.dataHora());
+        }
+
+
+        if (agendamentoDto.cliente() != null) {
+            ClienteModel novoCliente = clienteRepository.findById(agendamentoDto.cliente())
+                    .orElseThrow(() -> new NotFoundException("Cliente com o ID fornecido não encontrado"));
+            agendamentoEncontrado.setCliente(novoCliente);
+        }
+
+        if (agendamentoDto.servicosID() != null) {
+            Set<UUID> idDosServicosEnviados = new HashSet<>(agendamentoDto.servicosID());
+            Set<AgendamentoServicos> servicosAtuais = agendamentoEncontrado.getServicosAgendados();
+
+            servicosAtuais.removeIf(item -> !idDosServicosEnviados.contains(item.getServico().getServicosId()));
+
+            Set<UUID> idsDosServicosAtuais = servicosAtuais.stream()
+                    .map(item -> item.getServico().getServicosId())
+                    .collect(Collectors.toSet());
+
+
+            for (UUID idNovoServico : idDosServicosEnviados) {
+                if (!idsDosServicosAtuais.contains(idNovoServico)) {
+                    ServicoModel servicoParaAdicionar = servicoRepository.findById(idNovoServico)
+                            .orElseThrow(() -> new NotFoundException("Serviço com o id: " + idNovoServico + " não encontrado"));
+                    agendamentoEncontrado.adicionarServico(servicoParaAdicionar, servicoParaAdicionar.getValor(), servicoParaAdicionar.getDuracao());
+                }
+            }
+
+            agendamentoEncontrado.setStatus(StatusAgendamentoEnum.AGENDADO);
+        }
+
+        AgendamentoModel agendamentoAtualizado = agendamentoRepository.save(agendamentoEncontrado);
+
+        return AgendamentoMapper.toResponseDto(agendamentoAtualizado);
+    }
+
 
     @Override
     public void delete(UUID id) {
+        AgendamentoModel agendamentoEncontrado = agendamentoRepository.getReferenceById(id);
+
+        if(agendamentoEncontrado.getStatus() == StatusAgendamentoEnum.CONCLUIDO){
+            throw new AgendamentoConcluidoException();
+        }
 
         agendamentoRepository.findById(id).orElseThrow(() -> new NotFoundException("Agendamento não encontrado"));
-
         agendamentoRepository.deleteById(id);
     }
 
-    
-    //TODO Alterar Status do Agendamento
-    // TODO Finalizar Agendamento -> Confirmar os serviços prestados e depois mudar status para CONCLUIDO
 
+    // TODO Finalizar Agendamento -> Confirmar os serviços prestados e depois mudar status para CONCLUIDO
 
 
 }

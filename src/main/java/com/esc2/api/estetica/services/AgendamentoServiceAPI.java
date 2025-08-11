@@ -15,5 +15,8 @@ public interface AgendamentoServiceAPI {
     AgendamentoResponseDto findById(UUID id);
     List<AgendamentoResponseDto> findAll();
 
+    AgendamentoResponseDto concluirAgendamento(UUID id);
+    AgendamentoResponseDto cancelarAgendamento(UUID id);
+
 
 }

@@ -3,7 +3,6 @@ package com.esc2.api.estetica.controllers;
 
 import com.esc2.api.estetica.dtos.AgendamentoDto;
 import com.esc2.api.estetica.dtos.response.AgendamentoResponseDto;
-import com.esc2.api.estetica.models.AgendamentoModel;
 import com.esc2.api.estetica.services.AgendamentoServiceAPI;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -51,6 +50,15 @@ public class AgendamentoController {
         return ResponseEntity.status(HttpStatus.OK).body(agendamentoService.update(agendamentoId, agendamentoDto));
     }
 
+    @PutMapping("/concluir/{agendamentoId}")
+   public ResponseEntity<AgendamentoResponseDto> concluirAgendamento(@PathVariable UUID agendamentoId) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoService.concluirAgendamento(agendamentoId));
+   }
+
+   @PutMapping("/cancelar/{agendamentoId}")
+    public ResponseEntity<AgendamentoResponseDto> cancelarAgendamento(@PathVariable UUID agendamentoId) {
+        return ResponseEntity.status(HttpStatus.OK).body(agendamentoService.cancelarAgendamento(agendamentoId));
+    }
 
 
 
