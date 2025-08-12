@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 
 @Entity
@@ -72,6 +73,22 @@ public class AgendamentoServicos {
 
     public void setAgendamento(AgendamentoModel agendamento) {
         this.agendamento = agendamento;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AgendamentoServicos that = (AgendamentoServicos) o;
+        // Dois itens são "iguais" se pertencerem ao mesmo agendamento e ao mesmo serviço
+        return Objects.equals(agendamento, that.agendamento) &&
+                Objects.equals(servico, that.servico);
+    }
+
+    @Override
+    public int hashCode() {
+        // O hashCode deve ser baseado nos mesmos campos do equals
+        return Objects.hash(agendamento, servico);
     }
 
 

@@ -15,6 +15,7 @@ public record AgendamentoResponseDto(
         ClienteResumoDto cliente, // Objeto aninhado
         List<AgendamentoServicosDto> servicosAgendados,
         BigDecimal valorTotal,
-        Integer duracaoTotal
+        Integer duracaoTotal,
+        boolean desconto
 ) {
 }

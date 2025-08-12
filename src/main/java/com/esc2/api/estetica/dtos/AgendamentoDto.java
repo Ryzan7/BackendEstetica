@@ -1,9 +1,12 @@
 package com.esc2.api.estetica.dtos;
 
+import com.esc2.api.estetica.enums.StatusAgendamentoEnum;
+import com.esc2.api.estetica.enums.TipoDesconto;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +20,11 @@ public record AgendamentoDto(
         Instant dataHora,
 
         @NotEmpty(message = "Um agendamento deve ter pelo menos um serviço.")
-        List<UUID> servicosID
+        List<UUID> servicosID,
+
+        boolean desconto,
+
+        BigDecimal valorDesconto,
+        TipoDesconto tipoDesconto
 ) {
 }

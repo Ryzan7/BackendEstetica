@@ -2,6 +2,7 @@ package com.esc2.api.estetica.models;
 
 import com.esc2.api.estetica.enums.CargoEnum;
 import com.esc2.api.estetica.enums.StatusAgendamentoEnum;
+import com.esc2.api.estetica.enums.TipoDesconto;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.FetchMode;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -48,12 +50,25 @@ public class AgendamentoModel implements Serializable {
     @Column(nullable = false)
     private StatusAgendamentoEnum status;
 
+    @Column(name = "valor-total")
     private BigDecimal valorTotal;
 
+    @Column(name = "duracao-total")
     private Integer duracaoTotal;
 
+    @Column(name = "observacoes")
     private String observacoes;
 
+    @Column(nullable = true)
+    private boolean desconto;
+
+    @Column(name = "tipo_desconto_aplicado")
+    @Enumerated(EnumType.STRING)
+    private TipoDesconto tipoDescontoAplicado;
+
+    @Column(name = "valor_desconto_aplicado")
+    private BigDecimal valorDescontoAplicado;
+    //**
     public void adicionarServico(ServicoModel servico, BigDecimal valorCobrado, Integer duracao){
         AgendamentoServicos servicoAdicionado = new AgendamentoServicos();
         servicoAdicionado.setServico(servico);
@@ -63,7 +78,6 @@ public class AgendamentoModel implements Serializable {
         this.servicosAgendados.add(servicoAdicionado);
     }
 
-    //TODO Método para calcular valorTotal e duracaoTotal
     public BigDecimal calculaValorTotal(){
         if(this.servicosAgendados.isEmpty()){
             return BigDecimal.ZERO;
@@ -82,8 +96,52 @@ public class AgendamentoModel implements Serializable {
                 .reduce(0, Integer::sum);
     }
 
+    //TODO Aplicar desconto (R$ ou %)
+
+    public BigDecimal getValorDoDesconto(BigDecimal valor, TipoDesconto tipo) {
+        BigDecimal valorTotal = calculaValorTotal();
+
+        if (valorTotal.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
+        if (valor == null || tipo == null) {
+            return BigDecimal.ZERO;
+        }
+
+        switch (tipo) {
+            case PORCENTAGEM:
+                // Validação: Desconto percentual não deve ser negativo ou maior que 100
+                if (valor.compareTo(BigDecimal.ZERO) < 0 || valor.compareTo(new BigDecimal("100")) > 0) {
+                    throw new IllegalArgumentException("Desconto percentual deve estar entre 0 e 100.");
+                }
+                BigDecimal fator = valor.divide(new BigDecimal("100"));
+                BigDecimal descontoCalculado = valorTotal.multiply(fator);
+                return descontoCalculado.setScale(2, RoundingMode.HALF_UP);
+
+            case FIXO:
+                // Validação: Desconto fixo não deve ser negativo
+                if (valor.compareTo(BigDecimal.ZERO) < 0) {
+                    throw new IllegalArgumentException("Desconto fixo não pode ser negativo.");
+                }
+                // O desconto não pode ser maior que o valor total, então retornamos o valor total
+                return valor;
+
+            default:
+                // Lançar exceção se um tipo desconhecido for passado
+                throw new IllegalStateException("Tipo de desconto desconhecido: " + tipo);
+        }
+    }
+
+    public BigDecimal getValorFinalComDesconto(BigDecimal valor, TipoDesconto tipo) {
+        BigDecimal valorTotal = this.calculaValorTotal();
+        BigDecimal valorDoDesconto = this.getValorDoDesconto(valor, tipo);
+
+        return valorTotal.subtract(valorDoDesconto);
+    }
+
 
     //TODO: Verificar a possibilidade de adicionar um profissional ao agendamento
+
 
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     @Column(nullable = false)
@@ -165,5 +223,29 @@ public class AgendamentoModel implements Serializable {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = LocalDateTime.now();
+    }
+
+    public TipoDesconto getTipoDescontoAplicado() {
+        return tipoDescontoAplicado;
+    }
+
+    public void setTipoDescontoAplicado(TipoDesconto tipoDescontoAplicado) {
+        this.tipoDescontoAplicado = tipoDescontoAplicado;
+    }
+
+    public BigDecimal getValorDescontoAplicado() {
+        return valorDescontoAplicado;
+    }
+
+    public void setValorDescontoAplicado(BigDecimal valorDescontoAplicado) {
+        this.valorDescontoAplicado = valorDescontoAplicado;
+    }
+
+    public boolean isDesconto() {
+        return desconto;
+    }
+
+    public void setDesconto(boolean desconto) {
+        this.desconto = desconto;
     }
 }

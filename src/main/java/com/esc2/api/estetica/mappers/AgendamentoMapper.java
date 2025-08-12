@@ -39,8 +39,9 @@ public class AgendamentoMapper {
                 agendamento.getStatus(),
                 clienteDto,
                 servicosAgendadosDto,
-                agendamento.calculaValorTotal(),
-                agendamento.calculaDuracaoTotal()
+                agendamento.getValorTotal(),
+                agendamento.calculaDuracaoTotal(),
+                agendamento.isDesconto()
         );
 
 

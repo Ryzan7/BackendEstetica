@@ -52,4 +52,11 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
+    @ExceptionHandler(AgendamentoConcluidoException.class)
+    public ResponseEntity<ErrorRecordResponse> handleAgendamentoConcluidoException(AgendamentoConcluidoException e) {
+
+        var errorResponse = new ErrorRecordResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),e.getMessage(),null);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
 }

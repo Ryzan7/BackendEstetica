@@ -6,7 +6,7 @@ import java.util.UUID;
 public record ServicoResumoDto(
         UUID id,
         String nome,
-        BigDecimal valor,
+        BigDecimal valorAtual,
         Integer duracao
 ) {
 }
