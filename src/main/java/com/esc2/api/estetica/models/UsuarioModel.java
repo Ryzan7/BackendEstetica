@@ -1,7 +1,7 @@
 package com.esc2.api.estetica.models;
 
 import com.esc2.api.estetica.enums.CargoEnum;
-import com.esc2.api.estetica.enums.EspecialidadeEnum;
+//import com.esc2.api.estetica.enums.EspecialidadeEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
@@ -31,10 +31,10 @@ public class UsuarioModel implements Serializable {
     @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false)
-
     //TODO IMPLEMENTAR CRIPTOGRAFIA DE SENHA
+    @Column(name = "password", nullable = false, length = 100)
     private String password;
+
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
