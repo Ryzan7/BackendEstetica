@@ -1,13 +1,11 @@
 package com.esc2.api.estetica.services.impl;
 
 import com.esc2.api.estetica.dtos.UsuarioRecordDto;
-import com.esc2.api.estetica.exceptions.NotFoundException;
 import com.esc2.api.estetica.models.UsuarioModel;
 import com.esc2.api.estetica.repositories.UsuarioRepository;
 import com.esc2.api.estetica.services.UsuarioServiceAPI;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,48 +16,64 @@ import java.util.UUID;
 @Service
 public class UsuarioServiceImpl implements UsuarioServiceAPI {
 
+    private final UsuarioRepository repo;
+    private final PasswordEncoder encoder;
 
-    private final UsuarioRepository usuarioRepository;
-
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
+    public UsuarioServiceImpl(UsuarioRepository repo, PasswordEncoder encoder) {
+        this.repo = repo;
+        this.encoder = encoder;
     }
-
 
     @Override
     public UsuarioModel salvar(UsuarioRecordDto dto) {
-        var model = new UsuarioModel();
-        BeanUtils.copyProperties(dto, model);
+        UsuarioModel u = new UsuarioModel();
+        u.setNome(dto.nome());
+        u.setEmail(dto.email());
+        u.setUsername(dto.username());
+        u.setCargoEnum(dto.cargoEnum());
+        u.setCreationDate(LocalDateTime.now());
 
-        //TODO Usar o @PrePersist no Model
-        model.setCreationDate(LocalDateTime.now());
-        return usuarioRepository.save(model);
+        // Insere a criptografia:
+        u.setPassword(encoder.encode(dto.password()));
+
+        return repo.save(u);
     }
 
     @Override
     public List<UsuarioModel> listarTodos() {
-        return usuarioRepository.findAll();
+        return repo.findAll();
     }
 
     @Override
     public Optional<UsuarioModel> buscarPorId(UUID id) {
-        return Optional.of(usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Usuário não encontrado.")));
+        return repo.findById(id);
     }
 
     @Override
     public UsuarioModel atualizar(UUID id, UsuarioRecordDto dto) {
-        UsuarioModel usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
+        UsuarioModel u = repo.findById(id).orElseThrow();
 
-        BeanUtils.copyProperties(dto, usuario);
-        return usuarioRepository.save(usuario);
+        u.setNome(dto.nome());
+        u.setEmail(dto.email());
+        u.setUsername(dto.username());
+        u.setCargoEnum(dto.cargoEnum());
+
+        // Atualiza a senha só se vier no DTO e sempre codifica
+        if (dto.password() != null && !dto.password().isBlank()) {
+            u.setPassword(encoder.encode(dto.password()));
+        }
+
+        return repo.save(u);
     }
 
     @Override
     public void deletar(UUID id) {
-        UsuarioModel usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
-        usuarioRepository.delete(usuario);
+        repo.deleteById(id);
     }
+
+	@Override
+	public UsuarioModel salvar(UsuarioModel usuarioModel) {
+		// TODO Stub de método gerado automaticamente
+		return null;
+	}
 }
