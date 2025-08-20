@@ -8,9 +8,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UsuarioServiceAPI {
-    UsuarioModel salvar(UsuarioRecordDto dto);
+	UsuarioModel salvar(UsuarioRecordDto dto);
     List<UsuarioModel> listarTodos();
     Optional<UsuarioModel> buscarPorId(UUID id);
     UsuarioModel atualizar(UUID id, UsuarioRecordDto dto);
     void deletar(UUID id);
+	UsuarioModel salvar(UsuarioModel usuarioModel);
 }
