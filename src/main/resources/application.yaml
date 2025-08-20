@@ -18,3 +18,9 @@ spring:
     properties:
       hibernate:
         show_sql: true
+app:
+  security:
+    jwt:
+      secret: "wPpL9oZ7uZc3s8vDnH1mTy2aXQ+YbS3GkLzjWnM0oEhqV8yC7T3p6BfT1rN5dJ2w"
+      expiration-seconds: 3600
+        
