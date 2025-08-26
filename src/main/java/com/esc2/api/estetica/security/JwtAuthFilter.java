@@ -11,10 +11,12 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-
+	private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class); // Adicione esta linha
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService uds;
 
@@ -39,6 +41,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails user = uds.loadUserByUsername(username);
             if (jwtUtil.validate(token, user)) {
+                log.info("Usuário '{}' validado. Permissões: {}", user.getUsername(), user.getAuthorities());
                 var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
                 SecurityContextHolder.getContext().setAuthentication(auth);

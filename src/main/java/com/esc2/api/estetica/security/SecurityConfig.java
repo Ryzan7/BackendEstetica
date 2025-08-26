@@ -42,7 +42,7 @@ public class SecurityConfig {
         final String[] GET_COORD_ONLY = {
             "/clientes/**",
             "/profissionais/**",
-            "/servicos/**"
+            "/servicos/**",
         };
 
         http
@@ -51,7 +51,10 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // login público
                 .requestMatchers("/auth/login").permitAll()
-
+                
+                .requestMatchers(HttpMethod.GET,"/relatorio/**")
+                .hasRole("ADMINISTRADOR")
+                
                 // USUÁRIOS — COORD só vê (GET), ADMIN gerencia tudo
                 .requestMatchers(HttpMethod.GET, "/usuarios/**")
                     .hasAnyRole("ADMINISTRADOR","COORDENADOR")
