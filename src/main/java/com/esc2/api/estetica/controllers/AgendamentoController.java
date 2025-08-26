@@ -3,12 +3,19 @@ package com.esc2.api.estetica.controllers;
 
 import com.esc2.api.estetica.dtos.AgendamentoDto;
 import com.esc2.api.estetica.dtos.response.AgendamentoResponseDto;
+import com.esc2.api.estetica.models.AgendamentoModel;
 import com.esc2.api.estetica.services.AgendamentoServiceAPI;
+import com.esc2.api.estetica.services.impl.RelatorioService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,10 +25,12 @@ import java.util.UUID;
 public class AgendamentoController {
 
     AgendamentoServiceAPI agendamentoService;
+    RelatorioService relatorioService;
 
-    public AgendamentoController(AgendamentoServiceAPI agendamentoService) {
+    public AgendamentoController(AgendamentoServiceAPI agendamentoService, RelatorioService relatorioService) {
         this.agendamentoService = agendamentoService;
-    }
+        this.relatorioService = relatorioService;
+        }
 
     @PostMapping
     public ResponseEntity<AgendamentoResponseDto> save(@RequestBody @Valid AgendamentoDto agendamentoDto) {
@@ -61,7 +70,21 @@ public class AgendamentoController {
     }
 
 
+   @GetMapping("/relatorio/excel")
+   public void exportarAgendamentosParaExcel(
+           @RequestParam("dataInicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant dataInicio,
+           @RequestParam("dataFim") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Instant dataFim,
+           HttpServletResponse response
+   ) throws IOException {
 
+       response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+       String headerValue = "attachment; filename=relatorio_agendamentos_" + dataInicio + "_a_" + dataFim + ".xlsx";
+       response.setHeader("Content-Disposition", headerValue);
+
+
+       List<AgendamentoModel> agendamentos = agendamentoService.buscarAgendamentoPorPeriodo(dataInicio, dataFim);
+       relatorioService.gerarRelatorioAgendamentos(agendamentos, response);
+   }
 
 
 }

@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -56,7 +57,6 @@ public class AgendamentoServiceImpl implements AgendamentoServiceAPI {
         }
 
         if(agendamentoDto.tipoDesconto()!=null && agendamentoDto.valorDesconto()!=null){
-            agendamento.setDesconto(true);
             BigDecimal valorDoDescontoCalculado = agendamento.getValorFinalComDesconto(agendamentoDto.valorDesconto(), agendamentoDto.tipoDesconto());
 
             agendamento.setValorDescontoAplicado(agendamentoDto.valorDesconto());
@@ -131,6 +131,22 @@ public class AgendamentoServiceImpl implements AgendamentoServiceAPI {
         }
 
 
+        if(agendamentoDto.observacoes() != null){
+            agendamentoEncontrado.setObservacoes(agendamentoDto.observacoes());
+        }
+
+        if(agendamentoDto.tipoDesconto()!=null || agendamentoDto.valorDesconto()!=null){
+            BigDecimal valorDoDescontoCalculado = agendamentoEncontrado.getValorFinalComDesconto(agendamentoDto.valorDesconto(), agendamentoDto.tipoDesconto());
+
+            agendamentoEncontrado.setValorDescontoAplicado(agendamentoDto.valorDesconto());
+            agendamentoEncontrado.setTipoDescontoAplicado(agendamentoDto.tipoDesconto());
+
+
+            agendamentoEncontrado.setValorTotal(valorDoDescontoCalculado);
+            agendamentoEncontrado.setDesconto(true);
+
+        }
+        
         if (agendamentoDto.cliente() != null) {
             ClienteModel novoCliente = clienteRepository.findById(agendamentoDto.cliente())
                     .orElseThrow(() -> new NotFoundException("Cliente com o ID fornecido não encontrado"));
@@ -178,6 +194,11 @@ public class AgendamentoServiceImpl implements AgendamentoServiceAPI {
     }
 
 
+    @Override
+    public List<AgendamentoModel> buscarAgendamentoPorPeriodo(Instant inicio, Instant fim) {
+        return agendamentoRepository.findAllByDataHoraBetween(inicio,fim);
+    }
+    
     // TODO Finalizar Agendamento -> Confirmar os serviços prestados e depois mudar status para CONCLUIDO
 
 

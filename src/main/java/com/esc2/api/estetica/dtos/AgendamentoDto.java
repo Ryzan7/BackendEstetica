@@ -22,6 +22,8 @@ public record AgendamentoDto(
         @NotEmpty(message = "Um agendamento deve ter pelo menos um serviço.")
         List<UUID> servicosID,
 
+        String observacoes,
+        
         boolean desconto,
 
         BigDecimal valorDesconto,

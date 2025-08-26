@@ -16,6 +16,7 @@ public record AgendamentoResponseDto(
         List<AgendamentoServicosDto> servicosAgendados,
         BigDecimal valorTotal,
         Integer duracaoTotal,
-        boolean desconto
+        boolean desconto,
+        String observacoes
 ) {
 }
