@@ -38,48 +38,29 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // paths onde COORD pode consultar (GET) mas só ADMIN gerencia
-        final String[] GET_COORD_ONLY = {
-            "/clientes/**",
-            "/profissionais/**",
-            "/servicos/**",
-        };
-
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                // login público
-                .requestMatchers("/auth/login").permitAll()
-                
-                .requestMatchers(HttpMethod.GET,"/relatorio/**")
-                .hasRole("ADMINISTRADOR")
-                
-                // USUÁRIOS — COORD só vê (GET), ADMIN gerencia tudo
-                .requestMatchers(HttpMethod.GET, "/usuarios/**")
-                    .hasAnyRole("ADMINISTRADOR","COORDENADOR")
-                .requestMatchers("/usuarios/**")
-                    .hasRole("ADMINISTRADOR")
+            .authorizeHttpRequests(auth -> {
 
-                // AGENDAMENTOS — PROF/COORD/ADMIN veem (GET); só ADMIN gerencia
-                .requestMatchers(HttpMethod.GET, "/agendamentos/**")
-                    .hasAnyRole("ADMINISTRADOR","COORDENADOR","PROFESSOR")
-                .requestMatchers("/agendamentos/**")
-                    .hasRole("ADMINISTRADOR")
+                auth.requestMatchers("/auth/login").permitAll();
+                //Regras GET - Coordenador pode ler 'usuarios' 'clientes' 'profissionais' e 'servicos'
+                auth.requestMatchers(HttpMethod.GET, "/usuarios/**", "/clientes/**", "/profissionais/**", "/servicos/**")
+                        .hasAnyRole("COORDENADOR", "ADMINISTRADOR");
 
-                // CLIENTES / PROFISSIONAIS / SERVIÇOS — COORD/ADMIN veem (GET); só ADMIN gerencia
-                .requestMatchers(HttpMethod.GET, GET_COORD_ONLY)
-                    .hasAnyRole("ADMINISTRADOR","COORDENADOR")
-                .requestMatchers(GET_COORD_ONLY)
-                    .hasRole("ADMINISTRADOR")
+                // Profissionais podem LER Agendamentos
+                auth.requestMatchers(HttpMethod.GET, "/agendamentos/**")
+                        .hasAnyRole("ADMINISTRADOR", "COORDENADOR", "PROFISSIONAL");
 
-                // qualquer outro endpoint exige estar logado
-                .anyRequest().authenticated()
-            )
+                // Regras de escrita POST - PUT - DELETE
+                auth.requestMatchers("/usuarios/**", "/clientes/**", "/profissionais/**", "/servicos/**", "/agendamentos/**", "/relatorio/**")
+                        .hasRole("ADMINISTRADOR");
+
+
+                auth.anyRequest().authenticated();
+            })
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-
+        }
 }
