@@ -1,12 +1,14 @@
 package com.esc2.api.estetica.services.impl;
 
 import com.esc2.api.estetica.dtos.ClienteRecordDto;
+import com.esc2.api.estetica.dtos.ClienteUpdateDto;
 import com.esc2.api.estetica.exceptions.NotFoundException;
 import com.esc2.api.estetica.models.ClienteModel;
 import com.esc2.api.estetica.repositories.ClienteRepository;
 import com.esc2.api.estetica.services.ClienteServiceAPI;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -34,10 +36,24 @@ public class ClienteServiceImpl implements ClienteServiceAPI {
         return clienteRepository.save(clienteModel);
     }
 
-    @Override
-    public ClienteModel update(ClienteRecordDto clienteRecordDto, ClienteModel clienteModel) {
-        BeanUtils.copyProperties(clienteRecordDto, clienteModel);
-        return clienteRepository.save(clienteModel);
+    @Transactional
+    public ClienteModel update(UUID id, ClienteUpdateDto clienteDto) {
+      ClienteModel clienteEncontrado = clienteRepository.findById(id).orElseThrow(() -> new NotFoundException("Cliente não encontrado"));
+
+      if(clienteDto.nome() != null && !clienteDto.nome().trim().isEmpty()) {
+          clienteEncontrado.setNome(clienteDto.nome());
+      }
+      if(clienteDto.telefone() != null && !clienteDto.telefone().trim().isEmpty()) {
+          clienteEncontrado.setTelefone(clienteDto.telefone());
+      }
+      if(clienteDto.cpf() != null && !clienteDto.cpf().trim().isEmpty()) {
+          clienteEncontrado.setCpf(clienteDto.cpf());
+      }
+
+      ClienteModel clienteAtualizado = clienteRepository.save(clienteEncontrado);
+
+      return clienteAtualizado;
+
     }
 
     @Override
@@ -68,4 +84,10 @@ public class ClienteServiceImpl implements ClienteServiceAPI {
         return clienteModel;
 
     }
+
+	@Override
+	public ClienteModel update(ClienteRecordDto clienteRecordDto, ClienteModel clienteModel) {
+		// TODO Stub de método gerado automaticamente
+		return null;
+	}
 }
