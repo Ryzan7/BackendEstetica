@@ -24,6 +24,10 @@ import java.util.UUID;
 @Entity
 @Table(name = "TB_AGENDAMENTOS")
 public class AgendamentoModel implements Serializable {
+
+    //TESTE
+
+
     @Serial
     private static final long serialVersionUID = 1L;
 
