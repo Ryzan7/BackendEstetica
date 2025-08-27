@@ -1,6 +1,7 @@
 package com.esc2.api.estetica.controllers;
 
 import com.esc2.api.estetica.dtos.ProfissionalRecordDto;
+import com.esc2.api.estetica.dtos.ProfissionalUpdateDto;
 import com.esc2.api.estetica.models.ProfissionalModel;
 import com.esc2.api.estetica.services.ProfissionalServiceAPI;
 import jakarta.validation.Valid;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -39,19 +39,15 @@ public class ProfissionalController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProfissionalModel> buscarPorId(@PathVariable UUID id) {
-        return profissionalService.buscarPorId(id)
-        		.map(ResponseEntity::ok)
-        		.orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.status(HttpStatus.OK)
+        		.body(profissionalService.buscarPorId(id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProfissionalModel> atualizar(
     		@PathVariable UUID id,
-    		@RequestBody @Valid ProfissionalRecordDto dto) {
-        ProfissionalModel profissionalModel = profissionalService.buscarPorId(id)
-        		.orElseThrow(() -> new RuntimeException("Profissional não encontrado."));
-        ProfissionalModel atualizado = profissionalService.atualizar(dto, profissionalModel);
-        return ResponseEntity.ok(atualizado);
+    		@RequestBody @Valid ProfissionalUpdateDto dto) {
+        return ResponseEntity.status(HttpStatus.OK).body(profissionalService.atualizar(id,dto));
     }
 
     @DeleteMapping("/{id}")

@@ -1,19 +1,19 @@
 package com.esc2.api.estetica.services.impl;
 
 import com.esc2.api.estetica.dtos.ProfissionalRecordDto;
+import com.esc2.api.estetica.dtos.ProfissionalUpdateDto;
 import com.esc2.api.estetica.enums.CargoEnum;
 import com.esc2.api.estetica.exceptions.NotFoundException;
 import com.esc2.api.estetica.models.ProfissionalModel;
 import com.esc2.api.estetica.repositories.ProfissionalRepository;
 import com.esc2.api.estetica.services.ProfissionalServiceAPI;
 import com.esc2.api.estetica.mappers.ProfissionalMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -44,9 +44,34 @@ public class ProfissionalServiceImpl implements ProfissionalServiceAPI {
     }
 
     @Override
-    public ProfissionalModel atualizar(ProfissionalRecordDto dto, ProfissionalModel profissionalModel) {
-        profissionalMapper.updateFromDto(dto, profissionalModel);
-        return profissionalRepository.save(profissionalModel);
+    @Transactional
+    public ProfissionalModel atualizar(UUID id, ProfissionalUpdateDto profissionalDto) {
+        ProfissionalModel profissionalEncontrado = profissionalRepository.findById(id).orElseThrow(() -> new NotFoundException("Profissional não encontrado"));
+
+        if(profissionalDto.cpf() != null){
+            profissionalEncontrado.setCpf(profissionalDto.cpf());
+        }
+
+        if(profissionalDto.nome() != null){
+            profissionalEncontrado.setNome(profissionalDto.nome());
+        }
+
+        if(profissionalDto.cargoEnum() != null){
+            profissionalEncontrado.setCargoEnum(profissionalDto.cargoEnum());
+        }
+
+        if(profissionalDto.registroProfissional() != null){
+            profissionalEncontrado.setRegistroProfissional(profissionalDto.registroProfissional());
+        }
+
+        if(profissionalDto.telefone() != null){
+            profissionalEncontrado.setTelefone(profissionalDto.telefone());
+        }
+
+
+        ProfissionalModel profissionalAtualizado = profissionalRepository.save(profissionalEncontrado);
+
+        return profissionalAtualizado;
     }
 
     @Override
@@ -55,12 +80,10 @@ public class ProfissionalServiceImpl implements ProfissionalServiceAPI {
     }
 
     @Override
-    public Optional<ProfissionalModel> buscarPorId(UUID id) {
-        Optional<ProfissionalModel> model = profissionalRepository.findById(id);
-        if (model.isEmpty()) {
-            throw new NotFoundException("Profissional não encontrado.");
-        }
-        return model;
+    public ProfissionalModel buscarPorId(UUID id) {
+    	ProfissionalModel profissional = profissionalRepository.findById(id).orElseThrow(() -> new NotFoundException("Profissional não encontrado!"));
+
+        return profissional;
     }
 
     @Override
