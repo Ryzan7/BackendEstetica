@@ -13,5 +13,4 @@ public interface UsuarioServiceAPI {
     Optional<UsuarioModel> buscarPorId(UUID id);
     UsuarioModel atualizar(UUID id, UsuarioRecordDto dto);
     void deletar(UUID id);
-	UsuarioModel salvar(UsuarioModel usuarioModel);
 }
