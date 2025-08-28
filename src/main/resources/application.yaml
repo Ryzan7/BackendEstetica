@@ -5,9 +5,10 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/bdestetica
-    username: postgres
-    password: root
+    ##jdbc:postgresql://localhost:5432/bdestetica
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,6 +22,6 @@ spring:
 app:
   security:
     jwt:
-      secret: "wPpL9oZ7uZc3s8vDnH1mTy2aXQ+YbS3GkLzjWnM0oEhqV8yC7T3p6BfT1rN5dJ2w"
+      secret: ${JWT_SECRET}
       expiration-seconds: 3600
         
