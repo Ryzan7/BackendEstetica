@@ -7,6 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -32,7 +33,7 @@ public class RelatorioService {
 
 
         Row headerRow = sheet.createRow(0);
-        String[] columns = {"ID Agendamento", "Cliente", "Data", "Hora", "Serviços", "Valor Bruto", "Desconto (%)", "Valor Final", "Status"};
+        String[] columns = {"Data","Hora", "Cliente", "Serviços", "Desconto", "Valor Final", "Status"};
         for (int i = 0; i < columns.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(columns[i]);
@@ -55,40 +56,34 @@ public class RelatorioService {
         for (AgendamentoModel agendamento : agendamentos) {
             Row row = sheet.createRow(rowNum++);
 
-            row.createCell(0).setCellValue(agendamento.getCreationDate().toString());
-            row.createCell(1).setCellValue(agendamento.getCliente().getNome());
-
-
             Instant dataHora = agendamento.getDataHora().atZone(fusoClinica).toInstant();
-            Cell dataCell = row.createCell(2);
+            Cell dataCell = row.createCell(0);
             dataCell.setCellValue(java.util.Date.from(dataHora)); // POI trabalha melhor com java.util.Date
             dataCell.setCellStyle(dateStyle);
 
-            row.createCell(3).setCellValue(timeFormatter.format(dataHora));
+            row.createCell(1).setCellValue(timeFormatter.format(dataHora));
 
+
+            row.createCell(2).setCellValue(agendamento.getCliente().getNome());
 
             String servicosNomes = agendamento.getServicosAgendados().stream()
                     .map(item -> item.getServico().getNome())
                     .collect(Collectors.joining(", "));
-            row.createCell(4).setCellValue(servicosNomes);
+            row.createCell(3).setCellValue(servicosNomes);
 
 
-            Cell valorBrutoCell = row.createCell(5);
-            valorBrutoCell.setCellValue(agendamento.getValorTotal().doubleValue());
-            valorBrutoCell.setCellStyle(currencyStyle);
 
-
-            if(agendamento.isDesconto()) {
-                row.createCell(6).setCellValue("Sim");
+            if(agendamento.getValorDescontoAplicado().compareTo(BigDecimal.ZERO) > 0 ) {
+                row.createCell(4).setCellValue("Sim");
             } else {
-                row.createCell(6).setCellValue("N/A");
+                row.createCell(4).setCellValue("N/A");
             }
 
-            Cell valorFinalCell = row.createCell(7);
+            Cell valorFinalCell = row.createCell(5);
             valorFinalCell.setCellValue(agendamento.getValorTotal().doubleValue());
             valorFinalCell.setCellStyle(currencyStyle);
 
-            row.createCell(8).setCellValue(agendamento.getStatus().toString());
+            row.createCell(6).setCellValue(agendamento.getStatus().toString());
         }
 
 
