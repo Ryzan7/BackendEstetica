@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.esc2.api.estetica.security.JwtUtil;
 
-@CrossOrigin(origins = "http://localhost:5173")
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
