@@ -1,0 +1,50 @@
+# Configuração para ambiente Docker
+server:
+  port: 8080
+  servlet:
+    context-path: '/api-estetica/'
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      jdbc:
+        lob:
+          non_contextual_creation: true
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    open-in-view: false
+
+# Configurações da aplicação
+app:
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+      expiration-seconds: 3600
+
+# Configurações de logging para desenvolvimento
+logging:
+  level:
+    com.esc2.api.estetica: DEBUG
+    org.springframework.security: DEBUG
+
+# Health check
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

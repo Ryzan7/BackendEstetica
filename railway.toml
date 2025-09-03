@@ -1,0 +1,16 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/api-estetica/actuator/health"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[variables]
+PORT = "8080"
+SPRING_PROFILES_ACTIVE = "production"
+JWT_SECRET = "adYSgHkJQbZrSJRchQowNSj7KRjZENHvJMub2noeq7m0CYdH7d1cCjvavGdsoz6/"
+JWT_EXPIRATION = "3600"
+CORS_ALLOWED_ORIGINS = "https://*.railway.app,http://localhost:3000,http://localhost:5173"
