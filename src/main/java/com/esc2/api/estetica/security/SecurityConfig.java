@@ -46,6 +46,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> {
 
                 auth.requestMatchers("/auth/login").permitAll();
+                auth.requestMatchers("/actuator/health", "/actuator/info").permitAll();
                 //Regras GET - Coordenador pode ler 'usuarios' 'clientes' 'profissionais' e 'servicos'
                 auth.requestMatchers(HttpMethod.GET, "/usuarios/**", "/clientes/**", "/profissionais/**", "/servicos/**")
                         .hasAnyRole("COORDENADOR", "ADMINISTRADOR");

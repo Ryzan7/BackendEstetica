@@ -22,6 +22,6 @@ spring:
 app:
   security:
     jwt:
-      secret: ${JWT_SECRET}
+      secret: ${JWT_SECRET:adYSgHkJQbZrSJRchQowNSj7KRjZENHvJMub2noeq7m0CYdH7d1cCjvavGdsoz6/}
       expiration-seconds: 3600
         
