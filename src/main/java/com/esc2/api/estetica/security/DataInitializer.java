@@ -26,7 +26,8 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (repo.count() == 0) {
+        // Verifica se o usuário admin já existe
+        if (!repo.findByEmail("admin@sistema.com").isPresent()) {
             UsuarioModel admin = new UsuarioModel();
             admin.setNome("Admin");
             admin.setEmail("admin@sistema.com");
@@ -35,7 +36,22 @@ public class DataInitializer implements CommandLineRunner {
             admin.setCargoEnum(CargoEnum.ADMINISTRADOR);
             admin.setCreationDate(LocalDateTime.now());
             repo.save(admin);
-            System.out.println("Admin criado: admin / 123456");
+            System.out.println("Admin criado: admin@sistema.com / 123456");
         }
+        
+        // Verifica se o usuário douglas já existe
+        if (!repo.findByEmail("douglas@admin.com").isPresent()) {
+            UsuarioModel douglas = new UsuarioModel();
+            douglas.setNome("Douglas");
+            douglas.setEmail("douglas@admin.com");
+            douglas.setUsername("douglas");
+            douglas.setPassword(encoder.encode("douglas"));
+            douglas.setCargoEnum(CargoEnum.ADMINISTRADOR);
+            douglas.setCreationDate(LocalDateTime.now());
+            repo.save(douglas);
+            System.out.println("Usuário Douglas criado: douglas@admin.com / douglas");
+        }
+        
+        System.out.println("Total de usuários no sistema: " + repo.count());
     }
 }
