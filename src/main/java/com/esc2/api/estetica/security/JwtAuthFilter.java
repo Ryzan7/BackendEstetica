@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-	private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class); // Adicione esta linha
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class); // Adicione esta linha
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService uds;
 
@@ -25,6 +25,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         this.uds = uds;
     }
 
+    // SUBSTITUA O MÉTODO INTEIRO EM JwtAuthFilter.java
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws ServletException, IOException {
@@ -39,12 +40,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            System.out.println("\n>>> [FILTRO] Buscando usuário '" + username + "' no banco de dados...");
+
             UserDetails user = uds.loadUserByUsername(username);
+
+            System.out.println(">>> [FILTRO] Usuário '" + user.getUsername() + "' encontrado com sucesso!");
+
             if (jwtUtil.validate(token, user)) {
+                System.out.println(">>> [FILTRO] Token validado com sucesso. Configurando segurança.");
                 log.info("Usuário '{}' validado. Permissões: {}", user.getUsername(), user.getAuthorities());
                 var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
                 SecurityContextHolder.getContext().setAuthentication(auth);
+            } else {
+                System.out.println(">>> [FILTRO] A validação do token falhou (jwtUtil.validate retornou false).");
             }
         }
         chain.doFilter(req, res);
